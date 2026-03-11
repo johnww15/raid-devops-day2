@@ -7,7 +7,7 @@ import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
 const otlpEndpoint =
-  import.meta.env.VITE_OTEL_EXPORTER_OTLP_ENDPOINT || 'http://localhost:4318/v1/traces';
+  import.meta.env.VITE_OTEL_EXPORTER_OTLP_ENDPOINT + '/v1/traces' || 'http://localhost:4318/v1/traces';
 
 const exporter = new OTLPTraceExporter({ url: otlpEndpoint });
 
