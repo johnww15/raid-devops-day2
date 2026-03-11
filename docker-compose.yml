@@ -6,25 +6,33 @@ services:
     ports:
       - "5173:5173"
     restart: unless-stopped
-
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3001:3001"
-  #   environment:
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4318/v1/traces
-  #   restart: unless-stopped
-
+    environment:
+      - VITE_OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+    networks:
+      - otel_network
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    networks:
+      - otel_network
   # jaeger:
   #   image: jaegertracing/all-in-one:latest
   #   ports:
-  #     - "16686:16686"  # Jaeger UI
-  #     - "4318:4318"    # OTLP HTTP receiver
+  #     - "16686:16686" # Jaeger UI
+  #     - "4318:4318" # OTLP HTTP receiver
   #   environment:
   #     - COLLECTOR_OTLP_ENABLED=true
   #   command:
   #     - "--collector.otlp.http.cors.allowed-origins=*"
-  #     - "--collector.otlp.http.cors.allowed-headers=Content-Type,traceparent,tracestate,baggage"  
+  #     - "--collector.otlp.http.cors.allowed-headers=Content-Type,traceparent,tracestate,baggage"
   #   restart: unless-stopped
+networks:
+  otel_network:
+    external: true
+    name: opentelemetry-demo
